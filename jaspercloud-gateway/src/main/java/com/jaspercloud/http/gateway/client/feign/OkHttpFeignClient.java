@@ -1,6 +1,5 @@
 package com.jaspercloud.http.gateway.client.feign;
 
-import com.jaspercloud.http.gateway.client.ProxyPool;
 import com.jaspercloud.http.gateway.client.okhttp.OkHttpInterceptor;
 import com.jaspercloud.http.gateway.exception.NotFoundException;
 import feign.Client;
@@ -10,6 +9,7 @@ import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.http.HttpMethod;
 
 import java.io.IOException;
@@ -22,9 +22,9 @@ public class OkHttpFeignClient implements Client {
     private OkHttpClient okHttpClient;
     private Map<Request.Options, OkHttpClient> okHttpClientMap = new ConcurrentHashMap<>();
 
-    public OkHttpFeignClient(ProxyPool proxyPool) {
+    public OkHttpFeignClient(String gatewayAppName, LoadBalancerClient loadBalancerClient) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.addInterceptor(new OkHttpInterceptor(proxyPool));
+        builder.addInterceptor(new OkHttpInterceptor(gatewayAppName, loadBalancerClient));
         okHttpClient = builder.build();
     }
 
